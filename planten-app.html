@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="nl" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌱 Kweekkompas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    --soil:       #3b2a1a;
+    --moss:       #4a7c59;
+    --sage:       #8fbc8f;
+    --cream:      #f5f0e8;
+    --parchment:  #ede6d6;
+    --bark:       #7a5c3e;
+    --sun:        #e8b84b;
+    --sky:        #c8e6c9;
+    --text:       #1e1a14;
+    --muted:      #6b5c47;
+    --card-bg:    #ffffff;
+    --page-bg:    #f5f0e8;
+    --border:     #d4c9b0;
+    --tag-bg:     #e8f5e9;
+    --tag-text:   #2e7d32;
+    --shadow:     0 2px 8px rgba(59,42,26,0.10);
+  }
+
+  [data-theme="dark"] {
+    --soil:       #c8b49a;
+    --moss:       #81c784;
+    --sage:       #4a7c59;
+    --cream:      #1a1510;
+    --parchment:  #221c14;
+    --bark:       #c8a87a;
+    --sun:        #e8b84b;
+    --text:       #f0e8d8;
+    --muted:      #a89880;
+    --card-bg:    #2a2018;
+    --page-bg:    #1a1510;
+    --border:     #3a3020;
+    --tag-bg:     #1b3020;
+    --tag-text:   #81c784;
+    --shadow:     0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--page-bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--moss);
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo span { font-size: 1.5rem; }
+
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+
+  .btn-icon {
+    background: rgba(255,255,255,0.18);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+  }
+  .btn-icon:hover { background: rgba(255,255,255,0.32); }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--parchment);
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--muted);
+    border: none;
+    background: none;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab.active {
+    color: var(--moss);
+    border-bottom-color: var(--moss);
+  }
+
+  /* SEARCH BAR */
+  .search-wrap {
+    padding: 12px 16px 8px;
+    background: var(--parchment);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 10px 14px 10px 40px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--moss); }
+
+  .search-wrap { position: relative; }
+  .search-icon {
+    position: absolute;
+    left: 28px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  /* FILTERS */
+  .filters {
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: var(--parchment);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-group { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 130px; }
+  .filter-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  select {
+    padding: 7px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    cursor: pointer;
+  }
+  select:focus { border-color: var(--moss); }
+
+  /* VIEW SWITCHER */
+  .view-switcher {
+    display: flex;
+    gap: 4px;
+    padding: 8px 16px;
+    background: var(--parchment);
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+
+  .view-btn {
+    padding: 5px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    background: var(--card-bg);
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .view-btn.active {
+    background: var(--moss);
+    border-color: var(--moss);
+    color: white;
+  }
+
+  .result-count {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* MAIN CONTENT */
+  main { padding: 16px; }
+
+  /* LOADING / ERROR */
+  .state-msg {
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .state-msg .icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+  /* CARDS */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .plant-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .plant-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59,42,26,0.15);
+  }
+
+  .card-code {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+
+  .card-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+
+  .tag {
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .tag.orange { background: #fff3e0; color: #e65100; }
+  .tag.blue   { background: #e3f2fd; color: #1565c0; }
+  .tag.purple { background: #f3e5f5; color: #6a1b9a; }
+
+  .card-months {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .month-row { width: 100%; display: flex; align-items: center; gap: 6px; }
+  .month-label { font-size: 0.72rem; color: var(--muted); width: 80px; flex-shrink: 0; }
+
+  .month-dots { display: flex; gap: 2px; }
+  .month-dot {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    background: var(--border);
+    font-size: 0.55rem;
+    display: flex; align-items: center; justify-content: center;
+    color: transparent;
+    transition: background 0.1s;
+  }
+  .month-dot.active-binnen { background: var(--moss); }
+  .month-dot.active-buiten { background: var(--sun); }
+  .month-dot.active-oogst  { background: var(--bark); color: white; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; border-radius: 12px; border: 1.5px solid var(--border); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    background: var(--card-bg);
+  }
+
+  thead { background: var(--moss); color: white; }
+  th { padding: 10px 12px; text-align: left; font-weight: 600; font-size: 0.78rem; letter-spacing: 0.04em; white-space: nowrap; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--parchment); }
+  td.name-cell { font-weight: 600; }
+
+  .month-range { font-size: 0.8rem; color: var(--muted); }
+
+  /* CALENDAR */
+  .calendar-view { }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .cal-header {
+    display: grid;
+    grid-template-columns: 140px repeat(12, 1fr);
+    background: var(--moss);
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+  }
+  .cal-header-cell { padding: 8px 2px; text-align: center; }
+  .cal-header-label { padding: 8px 12px; }
+
+  .cal-row {
+    display: grid;
+    grid-template-columns: 140px repeat(12, 1fr);
+    border-bottom: 1px solid var(--border);
+    background: var(--card-bg);
+  }
+  .cal-row:last-child { border-bottom: none; }
+  .cal-row:hover { background: var(--parchment); }
+
+  .cal-name { padding: 8px 12px; font-size: 0.82rem; font-weight: 600; color: var(--text); display: flex; align-items: center; }
+  .cal-cell { padding: 4px 2px; display: flex; align-items: center; justify-content: center; }
+
+  .cal-dot {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+  }
+  .cal-dot.binnen { background: var(--moss); opacity: 0.85; }
+  .cal-dot.buiten { background: var(--sun); opacity: 0.9; }
+  .cal-dot.oogst  { background: var(--bark); opacity: 0.85; }
+  .cal-dot.empty  { background: transparent; }
+
+  .cal-legend {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    font-size: 0.8rem; color: var(--muted); margin-bottom: 10px;
+    align-items: center;
+  }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; margin-right: 4px; vertical-align: middle; }
+
+  /* DETAIL MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 200;
+    display: flex; align-items: flex-end;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--card-bg);
+    width: 100%; max-height: 85vh;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    overflow-y: auto;
+    transform: translateY(40px);
+    transition: transform 0.25s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+
+  .modal-code { font-size: 0.75rem; color: var(--muted); font-weight: 600; letter-spacing: 0.08em; }
+  .modal-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    margin: 4px 0 12px;
+    color: var(--text);
+  }
+
+  .modal-section { margin-top: 16px; }
+  .modal-section-title {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px;
+  }
+
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--border); border: none;
+    width: 30px; height: 30px; border-radius: 50%;
+    font-size: 1rem; cursor: pointer; color: var(--text);
+  }
+
+  .modal-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .modal-info-block {
+    background: var(--parchment);
+    border-radius: 10px;
+    padding: 10px 14px;
+    flex: 1; min-width: 120px;
+  }
+  .modal-info-label { font-size: 0.72rem; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
+  .modal-info-value { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+
+  .modal-desc {
+    font-size: 0.9rem; line-height: 1.6; color: var(--muted);
+    background: var(--parchment); border-radius: 10px; padding: 12px 14px;
+  }
+
+  .modal-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--moss); font-weight: 600; font-size: 0.9rem;
+    text-decoration: none; margin-top: 12px;
+  }
+
+  /* VOEDING / PH TABS */
+  .voeding-card, .ph-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+  }
+
+  .voeding-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .voeding-icons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .voeding-item {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 0.8rem; color: var(--muted);
+    background: var(--parchment);
+    padding: 4px 8px; border-radius: 6px;
+  }
+
+  .ph-range {
+    display: flex; align-items: center; gap: 10px; margin-top: 8px;
+  }
+  .ph-bar-wrap { flex: 1; height: 8px; background: var(--border); border-radius: 4px; position: relative; }
+  .ph-bar {
+    position: absolute; top: 0; height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--moss), var(--sun));
+  }
+  .ph-values { font-size: 0.85rem; font-weight: 600; color: var(--moss); white-space: nowrap; }
+
+  /* MONTH NAMES */
+  .month-bar-wrap { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 6px; }
+
+  .m-pill {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-weight: 600;
+    background: var(--border);
+    color: var(--muted);
+  }
+  .m-pill.binnen { background: var(--moss); color: white; }
+  .m-pill.buiten { background: var(--sun); color: var(--soil); }
+  .m-pill.oogst  { background: var(--bark); color: white; }
+
+  @media (max-width: 480px) {
+    .cal-name { font-size: 0.72rem; padding: 6px 8px; }
+    .cal-dot { width: 14px; height: 14px; }
+    main { padding: 10px; }
+    .cards-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span>🌱</span> Kweekkompas</div>
+  <div class="header-actions">
+    <button class="btn-icon" id="themeBtn" title="Donkere modus">🌙</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="zaden">Zaden & Planten</button>
+  <button class="tab" data-tab="voeding">Plantvoeding</button>
+  <button class="tab" data-tab="ph">PH-waarden</button>
+</div>
+
+<!-- ZADEN TAB -->
+<div id="tab-zaden">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="searchInput" type="search" placeholder="Zoek op plantnaam of code…" autocomplete="off">
+  </div>
+
+  <div class="filters">
+    <div class="filter-group">
+      <div class="filter-label">Zaai Binnen</div>
+      <select id="filterBinnen">
+        <option value="">Alle maanden</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Zaai Buiten</div>
+      <select id="filterBuiten">
+        <option value="">Alle maanden</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Oogstmaand</div>
+      <select id="filterOogst">
+        <option value="">Alle maanden</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="view-switcher">
+    <button class="view-btn active" data-view="cards">Kaartjes</button>
+    <button class="view-btn" data-view="table">Lijst</button>
+    <button class="view-btn" data-view="calendar">Kalender</button>
+    <span class="result-count" id="resultCount"></span>
+  </div>
+
+  <main id="zadenContent">
+    <div class="state-msg"><div class="icon">🌿</div>Plantdata laden…</div>
+  </main>
+</div>
+
+<!-- VOEDING TAB -->
+<div id="tab-voeding" style="display:none">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="searchVoeding" type="search" placeholder="Zoek op gewas…" autocomplete="off">
+  </div>
+  <main id="voedingContent" style="padding:16px">
+    <div class="state-msg"><div class="icon">🌿</div>Voedingdata laden…</div>
+  </main>
+</div>
+
+<!-- PH TAB -->
+<div id="tab-ph" style="display:none">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="searchPH" type="search" placeholder="Zoek op plantnaam…" autocomplete="off">
+  </div>
+  <main id="phContent" style="padding:16px">
+    <div class="state-msg"><div class="icon">🌿</div>PH-data laden…</div>
+  </main>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent" style="position:relative">
+    <div class="modal-handle"></div>
+    <button class="modal-close" id="modalClose">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const MONTHS = ['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
+
+const URLS = {
+  zaden:   'https://raw.githubusercontent.com/rich7/Dashboard/main/Kweken%20Zaden%20planten%20-%20Zaden.tsv',
+  voeding: 'https://raw.githubusercontent.com/rich7/Dashboard/main/Kweken%20Zaden%20planten%20-%20PlantVoeding.tsv',
+  ph:      'https://raw.githubusercontent.com/rich7/Dashboard/main/Kweken%20Zaden%20planten%20-%20PH%20waarden.tsv'
+};
+
+let zadenData = [], voedingData = [], phData = [];
+let currentView = 'cards';
+let currentTab = 'zaden';
+
+// --- PARSE TSV ---
+function parseTSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split('\t').map(h => h.trim().replace(/^"|"$/g,''));
+  return lines.slice(1).map(line => {
+    const vals = line.split('\t');
+    const obj = {};
+    headers.forEach((h,i) => obj[h] = (vals[i] || '').trim().replace(/^"|"$/g,''));
+    return obj;
+  }).filter(r => Object.values(r).some(v => v));
+}
+
+// --- FETCH ---
+async function fetchTSV(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Fout bij ophalen: ' + url);
+  return parseTSV(await res.text());
+}
+
+// --- MONTH HELPERS ---
+function monthRange(from, to) {
+  if (!from && !to) return [];
+  from = parseInt(from); to = parseInt(to);
+  if (isNaN(from)) return [];
+  if (isNaN(to)) return [from];
+  const months = [];
+  let m = from;
+  while (true) {
+    months.push(m);
+    if (m === to) break;
+    m = m % 12 + 1;
+    if (months.length > 12) break;
+  }
+  return months;
+}
+
+function monthName(n) { return MONTHS[(parseInt(n)-1+12)%12] || '?'; }
+
+function monthPills(months, cls) {
+  if (!months.length) return '<span style="color:var(--muted);font-size:0.8rem">—</span>';
+  return months.map(m => `<span class="m-pill ${cls}">${monthName(m)}</span>`).join('');
+}
+
+// --- ZADEN ---
+function getZaadMonths(plant) {
+  return {
+    binnen: monthRange(plant['Zaai Binnen'], plant['Bi tm']),
+    buiten: monthRange(plant['Zaai Buiten'], plant['bu tm']),
+    oogst:  monthRange(plant['Oogst vanaf'], plant['oogst tm'])
+  };
+}
+
+function renderCards(plants) {
+  if (!plants.length) return '<div class="state-msg"><div class="icon">🔍</div>Geen planten gevonden</div>';
+  return `<div class="cards-grid">${plants.map(p => {
+    const m = getZaadMonths(p);
+    return `<div class="plant-card" onclick="openModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <div class="card-code">${p.Code || ''}</div>
+      <div class="card-name">${p['Naam NL'] || '?'}</div>
+      <div class="card-tags">
+        ${m.binnen.length ? '<span class="tag">🏠 Binnen</span>' : ''}
+        ${m.buiten.length ? '<span class="tag orange">☀️ Buiten</span>' : ''}
+        ${m.oogst.length  ? '<span class="tag blue">🥬 Oogst</span>' : ''}
+      </div>
+      <div style="margin-top:6px">
+        ${m.binnen.length ? `<div class="month-row"><span class="month-label" style="font-size:0.7rem;color:var(--muted)">Zaai binnen</span><div class="month-bar-wrap">${monthPills(m.binnen,'binnen')}</div></div>` : ''}
+        ${m.buiten.length ? `<div class="month-row" style="margin-top:4px"><span class="month-label" style="font-size:0.7rem;color:var(--muted)">Zaai buiten</span><div class="month-bar-wrap">${monthPills(m.buiten,'buiten')}</div></div>` : ''}
+        ${m.oogst.length  ? `<div class="month-row" style="margin-top:4px"><span class="month-label" style="font-size:0.7rem;color:var(--muted)">Oogst</span><div class="month-bar-wrap">${monthPills(m.oogst,'oogst')}</div></div>` : ''}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderTable(plants) {
+  if (!plants.length) return '<div class="state-msg"><div class="icon">🔍</div>Geen planten gevonden</div>';
+  return `<div class="table-wrap"><table>
+    <thead><tr>
+      <th>Code</th><th>Naam</th>
+      <th>Zaai Binnen</th><th>Zaai Buiten</th><th>Oogst</th>
+    </tr></thead>
+    <tbody>${plants.map(p => {
+      const m = getZaadMonths(p);
+      const fmt = (arr) => arr.length ? arr.map(x=>monthName(x)).join(', ') : '—';
+      return `<tr onclick="openModal(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="cursor:pointer">
+        <td style="color:var(--muted);font-size:0.78rem">${p.Code||''}</td>
+        <td class="name-cell">${p['Naam NL']||'?'}</td>
+        <td class="month-range">${fmt(m.binnen)}</td>
+        <td class="month-range">${fmt(m.buiten)}</td>
+        <td class="month-range">${fmt(m.oogst)}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+function renderCalendar(plants) {
+  if (!plants.length) return '<div class="state-msg"><div class="icon">🔍</div>Geen planten gevonden</div>';
+  const header = `<div class="cal-header">
+    <div class="cal-header-label">Plant</div>
+    ${MONTHS.map(m=>`<div class="cal-header-cell">${m}</div>`).join('')}
+  </div>`;
+  const rows = plants.map(p => {
+    const m = getZaadMonths(p);
+    const cells = MONTHS.map((_,i) => {
+      const mn = i+1;
+      let cls = 'empty';
+      if (m.oogst.includes(mn))  cls = 'oogst';
+      else if (m.buiten.includes(mn)) cls = 'buiten';
+      else if (m.binnen.includes(mn)) cls = 'binnen';
+      return `<div class="cal-cell"><div class="cal-dot ${cls}"></div></div>`;
+    }).join('');
+    return `<div class="cal-row" onclick="openModal(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="cursor:pointer">
+      <div class="cal-name">${p['Naam NL']||'?'}</div>
+      ${cells}
+    </div>`;
+  }).join('');
+  return `<div class="cal-legend">
+    <span><span class="legend-dot" style="background:var(--moss)"></span>Zaai binnen</span>
+    <span><span class="legend-dot" style="background:var(--sun)"></span>Zaai buiten</span>
+    <span><span class="legend-dot" style="background:var(--bark)"></span>Oogst</span>
+  </div>
+  <div style="overflow-x:auto;border-radius:12px;border:1.5px solid var(--border)">
+    ${header}${rows}
+  </div>`;
+}
+
+function renderZaden(plants) {
+  document.getElementById('resultCount').textContent = `${plants.length} planten`;
+  const el = document.getElementById('zadenContent');
+  if (currentView === 'cards') el.innerHTML = renderCards(plants);
+  else if (currentView === 'table') el.innerHTML = renderTable(plants);
+  else el.innerHTML = renderCalendar(plants);
+}
+
+function filterZaden() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const fB = document.getElementById('filterBinnen').value;
+  const fBu = document.getElementById('filterBuiten').value;
+  const fO = document.getElementById('filterOogst').value;
+
+  return zadenData.filter(p => {
+    if (q && !((p['Naam NL']||'').toLowerCase().includes(q) || (p.Code||'').toLowerCase().includes(q))) return false;
+    const m = getZaadMonths(p);
+    if (fB  && !m.binnen.map(String).includes(fB))  return false;
+    if (fBu && !m.buiten.map(String).includes(fBu)) return false;
+    if (fO  && !m.oogst.map(String).includes(fO))   return false;
+    return true;
+  });
+}
+
+function populateFilters() {
+  const binnenMonths = new Set(), buitenMonths = new Set(), oogstMonths = new Set();
+  zadenData.forEach(p => {
+    const m = getZaadMonths(p);
+    m.binnen.forEach(x => binnenMonths.add(x));
+    m.buiten.forEach(x => buitenMonths.add(x));
+    m.oogst.forEach(x => oogstMonths.add(x));
+  });
+  const fill = (id, set) => {
+    const sel = document.getElementById(id);
+    [...set].sort((a,b)=>a-b).forEach(m => {
+      const o = document.createElement('option');
+      o.value = m; o.textContent = monthName(m);
+      sel.appendChild(o);
+    });
+  };
+  fill('filterBinnen', binnenMonths);
+  fill('filterBuiten', buitenMonths);
+  fill('filterOogst', oogstMonths);
+}
+
+// --- MODAL ---
+function openModal(plant) {
+  const m = getZaadMonths(plant);
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-code">${plant.Code||''}</div>
+    <div class="modal-name">${plant['Naam NL']||'?'}</div>
+    <div class="modal-row">
+      ${m.binnen.length ? `<div class="modal-info-block">
+        <div class="modal-info-label">🏠 Zaai Binnen</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${monthPills(m.binnen,'binnen')}</div>
+      </div>` : ''}
+      ${m.buiten.length ? `<div class="modal-info-block">
+        <div class="modal-info-label">☀️ Zaai Buiten</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${monthPills(m.buiten,'buiten')}</div>
+      </div>` : ''}
+      ${m.oogst.length ? `<div class="modal-info-block">
+        <div class="modal-info-label">🥬 Oogstperiode</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${monthPills(m.oogst,'oogst')}</div>
+      </div>` : ''}
+    </div>
+    ${plant['Beschrijving '] ? `<div class="modal-section">
+      <div class="modal-section-title">Beschrijving</div>
+      <div class="modal-desc">${plant['Beschrijving ']}</div>
+    </div>` : ''}
+    ${plant.link ? `<a class="modal-link" href="${plant.link}" target="_blank">🔗 Meer informatie</a>` : ''}
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+document.getElementById('modalClose').onclick = closeModal;
+document.getElementById('modalOverlay').onclick = e => { if (e.target === e.currentTarget) closeModal(); };
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+// --- VOEDING ---
+function renderVoeding(data) {
+  const q = document.getElementById('searchVoeding').value.toLowerCase();
+  const filtered = data.filter(r => !q || (r.Gewas||'').toLowerCase().includes(q));
+  if (!filtered.length) {
+    document.getElementById('voedingContent').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>Geen resultaten</div>';
+    return;
+  }
+  const icon = v => v === '✅' ? '✅' : v === '❌' ? '❌' : v === '⚠️' ? '⚠️' : v;
+  document.getElementById('voedingContent').innerHTML = filtered.map(r => {
+    const name = (r.Gewas||'').replace(/\*\*/g,'');
+    const items = [
+      ['Compost', r.Compost],
+      ['Plantenthee', r['thee']||r['"thee"']],
+      ['Koffiedik', r.Koffiedik],
+      ['Eierschalen', r.Eierschalen],
+      ['Houtas', r.Houtas],
+    ].filter(([,v]) => v).map(([l,v]) =>
+      `<div class="voeding-item">${icon(v)} ${l}</div>`
+    ).join('');
+    const toelichting = r['Specifieke Toelichting op basis van jouw tuin'] || r['Toelichting'] || '';
+    return `<div class="voeding-card">
+      <div class="voeding-name">${name}</div>
+      <div class="voeding-icons">${items}</div>
+      ${toelichting ? `<div style="font-size:0.82rem;color:var(--muted);margin-top:4px;line-height:1.5">${toelichting}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// --- PH ---
+function renderPH(data) {
+  const q = document.getElementById('searchPH').value.toLowerCase();
+  const filtered = data.filter(r => !q || (r.Plant||'').toLowerCase().includes(q));
+  if (!filtered.length) {
+    document.getElementById('phContent').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>Geen resultaten</div>';
+    return;
+  }
+  // find keys for pH values (2nd and 3rd column)
+  const keys = Object.keys(data[0] || {});
+  const phKey1 = keys[1], phKey2 = keys[2];
+  document.getElementById('phContent').innerHTML = filtered.map(r => {
+    const ph1 = parseFloat(r[phKey1]);
+    const ph2 = parseFloat(r[phKey2]);
+    const hasRange = !isNaN(ph1) && !isNaN(ph2);
+    const single = !isNaN(ph1) && isNaN(ph2);
+    const label = hasRange ? `${ph1} – ${ph2}` : (single ? `${ph1}` : '?');
+    const left = hasRange ? ((ph1 - 3.5) / 10.5 * 100).toFixed(1) : 0;
+    const width = hasRange ? (((ph2 - ph1) / 10.5) * 100).toFixed(1) : 5;
+    return `<div class="ph-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-family:'DM Serif Display',serif;font-size:1.1rem">${r.Plant||'?'}</div>
+        <div class="ph-values">pH ${label}</div>
+      </div>
+      ${hasRange ? `<div class="ph-range">
+        <span style="font-size:0.72rem;color:var(--muted)">3.5</span>
+        <div class="ph-bar-wrap"><div class="ph-bar" style="left:${left}%;width:${width}%"></div></div>
+        <span style="font-size:0.72rem;color:var(--muted)">14</span>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// --- INIT ---
+async function init() {
+  try {
+    zadenData = await fetchTSV(URLS.zaden);
+    populateFilters();
+    renderZaden(filterZaden());
+  } catch(e) {
+    document.getElementById('zadenContent').innerHTML =
+      `<div class="state-msg"><div class="icon">⚠️</div>Kon plantdata niet laden.<br><small>${e.message}</small></div>`;
+  }
+  try {
+    voedingData = await fetchTSV(URLS.voeding);
+    renderVoeding(voedingData);
+  } catch(e) {
+    document.getElementById('voedingContent').innerHTML =
+      `<div class="state-msg"><div class="icon">⚠️</div>Kon voedingdata niet laden.</div>`;
+  }
+  try {
+    phData = await fetchTSV(URLS.ph);
+    renderPH(phData);
+  } catch(e) {
+    document.getElementById('phContent').innerHTML =
+      `<div class="state-msg"><div class="icon">⚠️</div>Kon PH-data niet laden.</div>`;
+  }
+}
+
+// --- EVENTS ---
+document.getElementById('searchInput').addEventListener('input', () => renderZaden(filterZaden()));
+document.getElementById('filterBinnen').addEventListener('change', () => renderZaden(filterZaden()));
+document.getElementById('filterBuiten').addEventListener('change', () => renderZaden(filterZaden()));
+document.getElementById('filterOogst').addEventListener('change', () => renderZaden(filterZaden()));
+
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentView = btn.dataset.view;
+    renderZaden(filterZaden());
+  });
+});
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-zaden').style.display  = tab.dataset.tab === 'zaden'   ? '' : 'none';
+    document.getElementById('tab-voeding').style.display = tab.dataset.tab === 'voeding' ? '' : 'none';
+    document.getElementById('tab-ph').style.display     = tab.dataset.tab === 'ph'      ? '' : 'none';
+  });
+});
+
+document.getElementById('searchVoeding').addEventListener('input', () => renderVoeding(voedingData));
+document.getElementById('searchPH').addEventListener('input', () => renderPH(phData));
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+});
+
+init();
+</script>
+</body>
+</html>
