@@ -340,27 +340,54 @@ function getMonths(p) {
   };
 }
 function stripStars(s) { return (s||'').replace(/\*\*/g,'').trim(); }
-function voedingStatus(p, key) {
-  const v = (p[key]||'').trim();
-  if (v==='✅') return 'yes';
-  if (v==='⚠️') return 'warn';
-  if (v==='❌') return 'no';
+// Zoek een kolom op met flexibele naam (trimmed, quotes stripped)
+function getCol(p, ...candidates) {
+  for (const key of Object.keys(p)) {
+    const clean = key.trim().replace(/^"|"$/g,'').toLowerCase();
+    for (const c of candidates) {
+      if (clean === c.toLowerCase()) return (p[key]||'').trim();
+    }
+  }
+  return '';
+}
+function voedingStatus(val) {
+  if (val==='✅') return 'yes';
+  if (val==='⚠️') return 'warn';
+  if (val==='❌') return 'no';
   return null;
 }
 function voedingChips(p) {
   const items = [
-    ['Compost','Compost'], ['"thee"','Plantenthee'], ['Koffiedik','Koffiedik'],
-    ['Eierschalen','Eierschalen'], ['Houtas','Houtas']
+    [['Compost'],           'Compost'],
+    [['thee','"thee"'],     'Plantenthee'],
+    [['Koffiedik'],         'Koffiedik'],
+    [['Eierschalen'],       'Eierschalen'],
+    [['Houtas'],            'Houtas'],
   ];
-  return items.map(([key,label]) => {
-    const s = voedingStatus(p, key);
+  return items.map(([keys, label]) => {
+    const val = getCol(p, ...keys);
+    const s = voedingStatus(val);
     if (!s) return '';
     const emoji = s==='yes'?'✅':s==='warn'?'⚠️':'❌';
     return `<span class="v-chip ${s}">${emoji} ${label}</span>`;
   }).join('');
 }
 
-// Parse pH string like "5.5-6.5" or "6.0-7.0"
+// pH kleur op basis van zuurgraad
+function phColor(ph) {
+  const mid = ph.min != null ? (ph.min + ph.max) / 2 : ph.min;
+  if (mid <= 5)  return { bg:'#e53935', text:'#fff', label:'Sterk Zuur' };
+  if (mid <= 6)  return { bg:'#e8b84b', text:'#3b2a1a', label:'Licht Zuur' };
+  if (mid <= 7.5)return { bg:'#43a047', text:'#fff', label:'Neutraal' };
+  if (mid <= 8.5)return { bg:'#26c6da', text:'#fff', label:'Licht Basisch' };
+  return           { bg:'#3949ab', text:'#fff', label:'Sterk Basisch' };
+}
+function phBadge(ph, large=false) {
+  if (!ph) return '';
+  const c = phColor(ph);
+  const sz = large ? 'font-size:1rem;padding:5px 14px' : 'font-size:0.75rem;padding:2px 8px';
+  return `<span class="ph-badge" style="background:${c.bg};color:${c.text};${sz}" title="${c.label}">pH ${ph.label}</span>`;
+}
 function parsePH(s) {
   if (!s) return null;
   const parts = s.replace(',','.').split(/[-–]/);
@@ -415,7 +442,7 @@ function renderCards(data) {
         <div class="voeding-row">${voedingChips(p)||'<span style="font-size:0.78rem;color:var(--muted)">—</span>'}</div>
       </div>
       ${ph||grond ? `<div class="card-section" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        ${ph ? `<span class="ph-badge">pH ${ph.label}</span>` : ''}
+        ${ph ? phBadge(ph) : ''}
         ${grond ? `<span class="grond-badge">🪱 ${grond}</span>` : ''}
       </div>` : ''}
     </div>`;
@@ -438,7 +465,7 @@ function renderTable(data) {
         <td style="font-size:0.8rem;color:var(--muted)">${fmt(m.binnen)}</td>
         <td style="font-size:0.8rem;color:var(--muted)">${fmt(m.buiten)}</td>
         <td style="font-size:0.8rem;color:var(--muted)">${fmt(m.oogst)}</td>
-        <td>${ph?`<span class="ph-badge">pH ${ph.label}</span>`:'—'}</td>
+        <td>${ph ? phBadge(ph) : '—'}</td>
         <td style="font-size:0.78rem;color:var(--muted)">${p['Grondtype']||'—'}</td>
       </tr>`;
     }).join('')}</tbody>
@@ -451,8 +478,8 @@ function renderVoeding() {
   const data = allData.filter(p => {
     if (q && !stripStars(p['Naam NL']).toLowerCase().includes(q)) return false;
     for (const key of activeVoeding) {
-      const col = key === 'thee' ? '"thee"' : key;
-      if ((p[col]||'').trim() !== '✅') return false;
+      const keys = key === 'thee' ? ['thee','"thee"'] : [key];
+      if (getCol(p, ...keys) !== '✅') return false;
     }
     return true;
   });
@@ -483,12 +510,13 @@ function renderPH() {
   }
   const items = data.map(p => {
     const ph = parsePH(p['pH']);
+    const c = phColor(ph);
     const left = ((ph.min - 3.5) / 10.5 * 100).toFixed(1);
     const width = (((ph.max - ph.min) / 10.5) * 100 + 2).toFixed(1);
     return `<div class="ph-list-item" onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
       <div class="ph-name">${stripStars(p['Naam NL'])}</div>
-      <div class="ph-bar-wrap"><div class="ph-bar" style="left:${left}%;width:${width}%"></div></div>
-      <div class="ph-val">pH ${ph.label}</div>
+      <div class="ph-bar-wrap"><div class="ph-bar" style="left:${left}%;width:${width}%;background:${c.bg}"></div></div>
+      <div class="ph-val" style="color:${c.bg}">pH ${ph.label}</div>
     </div>`;
   }).join('');
   document.getElementById('phContent').innerHTML =
@@ -585,9 +613,9 @@ function openModal(el) {
   const p = JSON.parse(el.dataset.plant.replace(/&#39;/g,"'"));
   const m = getMonths(p);
   const ph = parsePH(p['pH']);
-  const comp = parseCompanion(p['Companion Plants']);
-  const nietNa = (p['Niet na (jaar ervoor)']||'').replace(/\*\*/g,'').trim();
-  const nietVoor = (p['Niet voor (jaar erna)']||'').replace(/\*\*/g,'').trim();
+  const comp = parseCompanion(getCol(p, 'Companion Plants'));
+  const nietNa   = getCol(p, 'Niet na  (jaar ervoor)', 'Niet na (jaar ervoor)').replace(/\*\*/g,'').trim();
+  const nietVoor = getCol(p, 'Niet voor (jaar erna)').replace(/\*\*/g,'').trim();
 
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-name">${stripStars(p['Naam NL'])}</div>
@@ -625,7 +653,7 @@ function openModal(el) {
       <div class="modal-row">
         ${ph ? `<div class="modal-block">
           <div class="modal-block-label">Zuurgraad (pH)</div>
-          <div class="modal-block-value"><span class="ph-badge" style="font-size:1rem;padding:4px 12px">pH ${ph.label}</span></div>
+          <div class="modal-block-value">${phBadge(ph, true)}<span style="font-size:0.75rem;color:var(--muted);margin-left:8px">${phColor(ph).label}</span></div>
         </div>` : ''}
         ${p['Grondtype'] ? `<div class="modal-block">
           <div class="modal-block-label">Grondtype</div>
