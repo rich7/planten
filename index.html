@@ -309,7 +309,7 @@ let currentView = 'cards';
 // --- PARSE ---
 function parseTSV(text) {
   const lines = text.trim().split('\n');
-  const headers = lines[0].split('\t').map(h => h.trim().replace(/^"|"$/g,''));
+  const headers = lines[0].split('\t').map(h => h.trim().replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').replace(/^"|"$/g,''));
   return lines.slice(1).map(line => {
     const vals = line.split('\t');
     const obj = {};
@@ -343,9 +343,10 @@ function stripStars(s) { return (s||'').replace(/\*\*/g,'').trim(); }
 // Zoek een kolom op met flexibele naam (trimmed, quotes stripped)
 function getCol(p, ...candidates) {
   for (const key of Object.keys(p)) {
-    const clean = key.trim().replace(/^"|"$/g,'').toLowerCase();
+    const clean = key.trim().replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').replace(/^"|"$/g,'').toLowerCase();
     for (const c of candidates) {
-      if (clean === c.toLowerCase()) return (p[key]||'').trim();
+      const cc = c.trim().replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').toLowerCase();
+      if (clean === cc) return (p[key]||'').trim();
     }
   }
   return '';
@@ -673,7 +674,7 @@ function openModal(el) {
 
     <!-- Vruchtwisseling -->
     ${nietNa||nietVoor ? `<div class="modal-section">
-      <div class="modal-section-title">🔄 Vruchtwisseling</div>
+      <div class="modal-section-title">🔄 Wisselgewas</div>
       ${nietNa ? `<div style="margin-bottom:6px">
         <div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:4px">NIET NA (jaar ervoor)</div>
         ${nietNa.split(/[,;]+/).map(s=>`<span class="warn-tag">⚠️ ${s.trim()}</span>`).join('')}
