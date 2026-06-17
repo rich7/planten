@@ -189,7 +189,7 @@
     border-color: var(--sun);
   }
   .alg-divider {
-    grid-column: 1 / -1;
+    width: 100%;
     display: flex; align-items: center; gap: 10px;
     margin: 8px 0 4px;
     color: var(--muted); font-size: 0.75rem; font-weight: 700;
@@ -479,7 +479,7 @@ function renderCards(data) {
 
   const normalHtml = normal.map(makeCard).join('');
   const algHtml = alg.length
-    ? `<div class="alg-divider">📋 Algemeen (${alg.length})</div>${alg.map(makeCard).join('')}`
+    ? `</div><div class="alg-divider">📋 Algemeen (${alg.length})</div><div class="cards-grid">${alg.map(makeCard).join('')}`
     : '';
   return `<div class="cards-grid">${normalHtml}${algHtml}</div>`;
 }
