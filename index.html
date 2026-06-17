@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌱 Kweekkompas v3</title>
+<title>🌱 Kweekkompas v4</title>
+<!-- versie: v4 | datum: 2026-06-17 | bron: Google Sheets GID 2046388932 -->
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
 
@@ -50,21 +51,17 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--page-bg); color: var(--text); min-height: 100vh; transition: background 0.3s, color 0.3s; }
 
-  /* HEADER */
   header { background: var(--moss); color: white; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
   .logo { font-family: 'DM Serif Display', serif; font-size: 1.4rem; display: flex; align-items: center; gap: 8px; }
   .btn-icon { background: rgba(255,255,255,0.18); border: none; border-radius: 8px; color: white; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; transition: background 0.2s; }
   .btn-icon:hover { background: rgba(255,255,255,0.32); }
 
-  /* TABS */
   .tabs { display: flex; background: var(--parchment); border-bottom: 2px solid var(--border); overflow-x: auto; scrollbar-width: none; position: sticky; top: 60px; z-index: 100; }
   .tabs::-webkit-scrollbar { display: none; }
   .tab { padding: 10px 18px; font-size: 0.88rem; font-weight: 600; color: var(--muted); border: none; background: none; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.2s, border-color 0.2s; }
   .tab.active { color: var(--moss); border-bottom-color: var(--moss); }
 
-  /* TOOLBAR */
   .toolbar { background: var(--parchment); border-bottom: 1px solid var(--border); padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
-
   .search-wrap { position: relative; }
   .search-input { width: 100%; padding: 9px 12px 9px 38px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--card-bg); color: var(--text); font-size: 0.95rem; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
   .search-input:focus { border-color: var(--moss); }
@@ -80,25 +77,19 @@
   .vf-btn { padding: 5px 10px; border: 1.5px solid var(--border); border-radius: 20px; background: var(--card-bg); color: var(--muted); font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
   .vf-btn.active { background: var(--moss); border-color: var(--moss); color: white; }
 
-  /* VIEW BAR */
   .view-bar { display: flex; gap: 4px; padding: 8px 14px; background: var(--parchment); border-bottom: 1px solid var(--border); align-items: center; }
   .view-btn { padding: 5px 12px; border: 1.5px solid var(--border); border-radius: 7px; background: var(--card-bg); color: var(--muted); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
   .view-btn.active { background: var(--moss); border-color: var(--moss); color: white; }
   .result-count { margin-left: auto; font-size: 0.78rem; color: var(--muted); }
 
   main { padding: 14px; }
-
   .state-msg { text-align: center; padding: 48px 16px; color: var(--muted); }
   .state-msg .icon { font-size: 2.5rem; margin-bottom: 12px; }
 
-  /* CARDS */
   .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
-
   .plant-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 15px; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
   .plant-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59,42,26,0.15); }
-
   .card-name { font-family: 'DM Serif Display', serif; font-size: 1.15rem; margin-bottom: 8px; }
-
   .card-section { margin-top: 8px; }
   .card-section-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 4px; }
 
@@ -115,11 +106,9 @@
   .v-chip.warn { background: var(--tag-orange); color: var(--tag-orange-t); }
   .v-chip.no   { background: var(--tag-red);    color: var(--tag-red-t); opacity: 0.6; }
 
-  .ph-badge { display: inline-block; background: var(--tag-blue); color: var(--tag-blue-t); font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 5px; }
-
+  .ph-badge { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 5px; }
   .grond-badge { display: inline-block; background: var(--parchment); color: var(--muted); font-size: 0.73rem; font-weight: 600; padding: 2px 8px; border-radius: 5px; border: 1px solid var(--border); }
 
-  /* TABLE */
   .table-wrap { overflow-x: auto; border-radius: 12px; border: 1.5px solid var(--border); }
   table { width: 100%; border-collapse: collapse; font-size: 0.84rem; background: var(--card-bg); }
   thead { background: var(--moss); color: white; }
@@ -128,7 +117,6 @@
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: var(--parchment); cursor: pointer; }
 
-  /* CALENDAR */
   .cal-wrap { overflow-x: auto; border-radius: 12px; border: 1.5px solid var(--border); }
   .cal-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; align-items: center; }
   .legend-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; margin-right: 4px; vertical-align: middle; }
@@ -145,17 +133,15 @@
   .cal-dot.buiten { background: var(--sun); }
   .cal-dot.oogst  { background: var(--bark); opacity: 0.85; }
 
-  /* PH LIST */
   .ph-list-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--card-bg); border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
   .ph-list-item:first-child { border-radius: 12px 12px 0 0; }
   .ph-list-item:last-child  { border-radius: 0 0 12px 12px; border-bottom: none; }
   .ph-list-item:hover { background: var(--parchment); }
   .ph-name { font-weight: 600; font-size: 0.9rem; min-width: 130px; }
   .ph-bar-wrap { flex: 1; height: 8px; background: var(--border); border-radius: 4px; position: relative; }
-  .ph-bar { position: absolute; top: 0; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--moss), var(--sun)); }
-  .ph-val { font-size: 0.82rem; font-weight: 700; color: var(--moss); white-space: nowrap; min-width: 70px; text-align: right; }
+  .ph-bar { position: absolute; top: 0; height: 100%; border-radius: 4px; }
+  .ph-val { font-size: 0.82rem; font-weight: 700; white-space: nowrap; min-width: 70px; text-align: right; }
 
-  /* MODAL */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 300; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
   .modal { background: var(--card-bg); width: 100%; max-height: 90vh; border-radius: 20px 20px 0 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; transform: translateY(40px); transition: transform 0.25s; }
@@ -178,6 +164,21 @@
   .companion-tags { display: flex; flex-wrap: wrap; gap: 4px; }
   .companion-tag { background: var(--moss-lt); color: var(--tag-green-t); font-size: 0.78rem; font-weight: 600; padding: 3px 9px; border-radius: 6px; }
   .modal-link { display: inline-flex; align-items: center; gap: 6px; color: var(--moss); font-weight: 600; font-size: 0.9rem; text-decoration: none; margin-top: 14px; }
+
+  /* ALG. kaartjes */
+  .plant-card.alg-card {
+    background: var(--sun-lt);
+    border-color: var(--sun);
+    border-left: 4px solid var(--sun);
+  }
+  [data-theme="dark"] .plant-card.alg-card { background: #2a2010; }
+  .alg-section-header {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted);
+    display: flex; align-items: center; gap: 10px;
+    margin: 16px 0 8px;
+  }
+  .alg-section-header::after { content:''; flex:1; height:1px; background:var(--border); }
 
   @media (max-width: 480px) {
     .cards-grid { grid-template-columns: 1fr; }
@@ -202,7 +203,6 @@
   <button class="tab" data-tab="kalender">Kalender</button>
 </div>
 
-<!-- PLANTEN TAB -->
 <div id="tab-planten">
   <div class="toolbar">
     <div class="search-wrap">
@@ -210,22 +210,10 @@
       <input class="search-input" id="searchPlanten" type="search" placeholder="Zoek op plantnaam…" autocomplete="off">
     </div>
     <div class="filters-row">
-      <div class="filter-group">
-        <div class="filter-label">Zaai Binnen</div>
-        <select id="filterBinnen"><option value="">Alle maanden</option></select>
-      </div>
-      <div class="filter-group">
-        <div class="filter-label">Zaai Buiten</div>
-        <select id="filterBuiten"><option value="">Alle maanden</option></select>
-      </div>
-      <div class="filter-group">
-        <div class="filter-label">Oogst</div>
-        <select id="filterOogst"><option value="">Alle maanden</option></select>
-      </div>
-      <div class="filter-group">
-        <div class="filter-label">Grondtype</div>
-        <select id="filterGrond"><option value="">Alle grondtypen</option></select>
-      </div>
+      <div class="filter-group"><div class="filter-label">Zaai Binnen</div><select id="filterBinnen"><option value="">Alle maanden</option></select></div>
+      <div class="filter-group"><div class="filter-label">Zaai Buiten</div><select id="filterBuiten"><option value="">Alle maanden</option></select></div>
+      <div class="filter-group"><div class="filter-label">Oogst</div><select id="filterOogst"><option value="">Alle maanden</option></select></div>
+      <div class="filter-group"><div class="filter-label">Grondtype</div><select id="filterGrond"><option value="">Alle grondtypen</option></select></div>
     </div>
   </div>
   <div class="view-bar">
@@ -233,19 +221,13 @@
     <button class="view-btn" data-view="table">Lijst</button>
     <span class="result-count" id="resultCount"></span>
   </div>
-  <main id="plantenContent">
-    <div class="state-msg"><div class="icon">🌿</div>Plantdata laden…</div>
-  </main>
+  <main id="plantenContent"><div class="state-msg"><div class="icon">🌿</div>Plantdata laden…</div></main>
 </div>
 
-<!-- VOEDING TAB -->
 <div id="tab-voeding" style="display:none">
   <div class="toolbar">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" id="searchVoeding" type="search" placeholder="Zoek op plantnaam…" autocomplete="off">
-    </div>
-    <div class="voeding-filters" id="voedingFilters">
+    <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" id="searchVoeding" type="search" placeholder="Zoek op plantnaam…" autocomplete="off"></div>
+    <div class="voeding-filters">
       <span style="font-size:0.78rem;color:var(--muted);align-self:center">Filter ✅:</span>
       <button class="vf-btn" data-voeding="Compost">Compost</button>
       <button class="vf-btn" data-voeding="thee">Plantenthee</button>
@@ -254,44 +236,22 @@
       <button class="vf-btn" data-voeding="Houtas">Houtas</button>
     </div>
   </div>
-  <main id="voedingContent" style="padding:14px">
-    <div class="state-msg"><div class="icon">🌿</div>Laden…</div>
-  </main>
+  <main id="voedingContent" style="padding:14px"><div class="state-msg"><div class="icon">🌿</div>Laden…</div></main>
 </div>
 
-<!-- PH TAB -->
 <div id="tab-ph" style="display:none">
-  <div class="toolbar">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" id="searchPH" type="search" placeholder="Zoek op plantnaam…" autocomplete="off">
-    </div>
-  </div>
-  <main id="phContent" style="padding:14px">
-    <div class="state-msg"><div class="icon">🌿</div>Laden…</div>
-  </main>
+  <div class="toolbar"><div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" id="searchPH" type="search" placeholder="Zoek op plantnaam…" autocomplete="off"></div></div>
+  <main id="phContent" style="padding:14px"><div class="state-msg"><div class="icon">🌿</div>Laden…</div></main>
 </div>
 
-<!-- KALENDER TAB -->
 <div id="tab-kalender" style="display:none">
-  <div class="toolbar">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" id="searchKal" type="search" placeholder="Zoek op plantnaam…" autocomplete="off">
-    </div>
-  </div>
-  <main id="kalenderContent" style="padding:14px">
-    <div class="state-msg"><div class="icon">🌿</div>Laden…</div>
-  </main>
+  <div class="toolbar"><div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" id="searchKal" type="search" placeholder="Zoek op plantnaam…" autocomplete="off"></div></div>
+  <main id="kalenderContent" style="padding:14px"><div class="state-msg"><div class="icon">🌿</div>Laden…</div></main>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <div class="modal-handle-wrap">
-      <div class="modal-handle"></div>
-      <button class="modal-close" id="modalClose">✕</button>
-    </div>
+    <div class="modal-handle-wrap"><div class="modal-handle"></div><button class="modal-close" id="modalClose">✕</button></div>
     <div class="modal-scroll" id="modalBody"></div>
   </div>
 </div>
@@ -302,23 +262,18 @@ const SHEET_ID = '1r0bIlNZ4NzrXnN7d8hea5-e9axrg5aYnhUJ_8E0GVS4';
 const GID = '2046388932';
 const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=tsv&gid=${GID}`;
 
-let allData = [];
-let activeVoeding = new Set();
-let currentView = 'cards';
+let allData = [], activeVoeding = new Set(), currentView = 'cards';
 
-// --- PARSE ---
 function parseTSV(text) {
   const lines = text.trim().split('\n');
   const headers = lines[0].split('\t').map(h => h.trim().replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').replace(/^"|"$/g,''));
   return lines.slice(1).map(line => {
-    const vals = line.split('\t');
-    const obj = {};
+    const vals = line.split('\t'), obj = {};
     headers.forEach((h,i) => obj[h] = (vals[i]||'').trim().replace(/^"|"$/g,''));
     return obj;
   }).filter(r => Object.values(r).some(v => v) && r['Naam NL']);
 }
 
-// --- HELPERS ---
 function monthRange(from, to) {
   from = parseInt(from); to = parseInt(to);
   if (isNaN(from)) return [];
@@ -340,17 +295,17 @@ function getMonths(p) {
   };
 }
 function stripStars(s) { return (s||'').replace(/\*\*/g,'').trim(); }
-// Zoek een kolom op met flexibele naam (trimmed, quotes stripped)
+
 function getCol(p, ...candidates) {
   for (const key of Object.keys(p)) {
     const clean = key.trim().replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').replace(/^"|"$/g,'').toLowerCase();
     for (const c of candidates) {
-      const cc = c.trim().replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').toLowerCase();
-      if (clean === cc) return (p[key]||'').trim();
+      if (clean === c.trim().replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').toLowerCase()) return (p[key]||'').trim();
     }
   }
   return '';
 }
+
 function voedingStatus(val) {
   if (val==='✅') return 'yes';
   if (val==='⚠️') return 'warn';
@@ -359,29 +314,26 @@ function voedingStatus(val) {
 }
 function voedingChips(p) {
   const items = [
-    [['Compost'],           'Compost'],
-    [['thee','"thee"'],     'Plantenthee'],
-    [['Koffiedik'],         'Koffiedik'],
-    [['Eierschalen'],       'Eierschalen'],
-    [['Houtas'],            'Houtas'],
+    [['Compost'],'Compost'],
+    [['thee','"thee"'],'Plantenthee'],
+    [['Koffiedik'],'Koffiedik'],
+    [['Eierschalen'],'Eierschalen'],
+    [['Houtas'],'Houtas'],
   ];
-  return items.map(([keys, label]) => {
-    const val = getCol(p, ...keys);
-    const s = voedingStatus(val);
+  return items.map(([keys,label]) => {
+    const s = voedingStatus(getCol(p,...keys));
     if (!s) return '';
-    const emoji = s==='yes'?'✅':s==='warn'?'⚠️':'❌';
-    return `<span class="v-chip ${s}">${emoji} ${label}</span>`;
+    return `<span class="v-chip ${s}">${s==='yes'?'✅':s==='warn'?'⚠️':'❌'} ${label}</span>`;
   }).join('');
 }
 
-// pH kleur op basis van zuurgraad
 function phColor(ph) {
-  const mid = ph.min != null ? (ph.min + ph.max) / 2 : ph.min;
-  if (mid <= 5)  return { bg:'#e53935', text:'#fff', label:'Sterk Zuur' };
-  if (mid <= 6)  return { bg:'#e8b84b', text:'#3b2a1a', label:'Licht Zuur' };
-  if (mid <= 7.5)return { bg:'#43a047', text:'#fff', label:'Neutraal' };
-  if (mid <= 8.5)return { bg:'#26c6da', text:'#fff', label:'Licht Basisch' };
-  return           { bg:'#3949ab', text:'#fff', label:'Sterk Basisch' };
+  const mid = (ph.min + ph.max) / 2;
+  if (mid <= 5)   return { bg:'#e53935', text:'#fff', label:'Sterk Zuur' };
+  if (mid <= 6)   return { bg:'#e8b84b', text:'#3b2a1a', label:'Licht Zuur' };
+  if (mid <= 7.5) return { bg:'#43a047', text:'#fff', label:'Neutraal' };
+  if (mid <= 8.5) return { bg:'#26c6da', text:'#fff', label:'Licht Basisch' };
+  return                  { bg:'#3949ab', text:'#fff', label:'Sterk Basisch' };
 }
 function phBadge(ph, large=false) {
   if (!ph) return '';
@@ -396,178 +348,135 @@ function parsePH(s) {
   if (isNaN(a)) return null;
   return { min: a, max: isNaN(b)?a:b, label: isNaN(b)?`${a}`:`${a}–${b}` };
 }
-
-// Parse companion plants: "**Familie: Rosaceae**\nPlant1, Plant2"
-// or "**Bieslook, spinazie**<br>Familie: Rosaceae"
 function parseCompanion(s) {
   if (!s) return null;
   s = s.replace(/\*\*/g,'');
-  // split on <br> or newline
   const parts = s.split(/<br\s*\/?>/i);
   let family = '', plants = [];
   parts.forEach(part => {
     part = part.trim();
-    if (part.toLowerCase().startsWith('familie:')) {
-      family = part.replace(/familie:/i,'').trim();
-    } else if (part) {
-      // could be plant list
-      plants = part.split(/[,;]+/).map(x=>x.trim()).filter(Boolean);
-    }
+    if (part.toLowerCase().startsWith('familie:')) family = part.replace(/familie:/i,'').trim();
+    else if (part) plants = part.split(/[,;]+/).map(x=>x.trim()).filter(Boolean);
   });
   return { family, plants };
 }
 
-// --- CARDS ---
-function renderCards(data) {
-  if (!data.length) return '<div class="state-msg"><div class="icon">🔍</div>Geen planten gevonden</div>';
-  return `<div class="cards-grid">${data.map(p => {
-    const m = getMonths(p);
-    const ph = parsePH(p['pH']);
-    const grond = p['Grondtype']||'';
-    return `<div class="plant-card" onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
-      <div class="card-name">${stripStars(p['Naam NL'])}</div>
-      ${m.binnen.length||m.buiten.length ? `<div class="card-section">
-        <div class="card-section-label">🏠 Zaai Binnen</div>
-        <div class="m-pills">${pills(m.binnen,'binnen')}</div>
-      </div>` : ''}
-      ${m.buiten.length ? `<div class="card-section">
-        <div class="card-section-label">☀️ Zaai Buiten</div>
-        <div class="m-pills">${pills(m.buiten,'buiten')}</div>
-      </div>` : ''}
-      ${m.oogst.length ? `<div class="card-section">
-        <div class="card-section-label">🥬 Oogst</div>
-        <div class="m-pills">${pills(m.oogst,'oogst')}</div>
-      </div>` : ''}
-      <div class="card-section">
-        <div class="card-section-label">🌱 Voeding</div>
-        <div class="voeding-row">${voedingChips(p)||'<span style="font-size:0.78rem;color:var(--muted)">—</span>'}</div>
-      </div>
-      ${ph||grond ? `<div class="card-section" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        ${ph ? phBadge(ph) : ''}
-        ${grond ? `<span class="grond-badge">🪱 ${grond}</span>` : ''}
-      </div>` : ''}
-    </div>`;
-  }).join('')}</div>`;
+function isAlg(p) { return /^Alg[.,]/i.test((p['Naam NL']||'').trim()); }
+
+function makeCard(p) {
+  const m = getMonths(p), ph = parsePH(p['pH']), grond = p['Grondtype']||'';
+  const alg = isAlg(p);
+  const beschr = (p['Beschrijving ']||p['Beschrijving']||'').trim();
+  return `<div class="plant-card${alg?' alg-card':''}" onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
+    <div class="card-name">${stripStars(p['Naam NL'])}</div>
+    ${alg && beschr ? `<div style="font-size:0.83rem;color:var(--muted);line-height:1.5;margin:4px 0 6px">${beschr}</div>` : ''}
+    ${!alg && m.binnen.length ? `<div class="card-section"><div class="card-section-label">🏠 Zaai Binnen</div><div class="m-pills">${pills(m.binnen,'binnen')}</div></div>` : ''}
+    ${!alg && m.buiten.length ? `<div class="card-section"><div class="card-section-label">☀️ Zaai Buiten</div><div class="m-pills">${pills(m.buiten,'buiten')}</div></div>` : ''}
+    ${!alg && m.oogst.length  ? `<div class="card-section"><div class="card-section-label">🥬 Oogst</div><div class="m-pills">${pills(m.oogst,'oogst')}</div></div>` : ''}
+    <div class="card-section"><div class="card-section-label">🌱 Voeding</div><div class="voeding-row">${voedingChips(p)||'<span style="font-size:0.78rem;color:var(--muted)">—</span>'}</div></div>
+    ${ph||grond ? `<div class="card-section" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${ph?phBadge(ph):''}${grond?`<span class="grond-badge">🪱 ${grond}</span>`:''}</div>` : ''}
+  </div>`;
 }
 
-// --- TABLE ---
+function renderCards(data) {
+  if (!data.length) return '<div class="state-msg"><div class="icon">🔍</div>Geen planten gevonden</div>';
+  const normal = data.filter(p => !isAlg(p));
+  const alg    = data.filter(p =>  isAlg(p));
+  let html = `<div class="cards-grid">${normal.map(makeCard).join('')}</div>`;
+  if (alg.length) {
+    html += `<div class="alg-section-header">📋 Algemeen (${alg.length})</div>`;
+    html += `<div class="cards-grid">${alg.map(makeCard).join('')}</div>`;
+  }
+  return html;
+}
+
 function renderTable(data) {
   if (!data.length) return '<div class="state-msg"><div class="icon">🔍</div>Geen planten gevonden</div>';
+  const fmt = arr => arr.length ? arr.map(mName).join(', ') : '—';
   return `<div class="table-wrap"><table>
-    <thead><tr>
-      <th>Naam</th><th>Zaai Binnen</th><th>Zaai Buiten</th><th>Oogst</th><th>pH</th><th>Grond</th>
-    </tr></thead>
+    <thead><tr><th>Naam</th><th>Zaai Binnen</th><th>Zaai Buiten</th><th>Oogst</th><th>pH</th><th>Grond</th></tr></thead>
     <tbody>${data.map(p => {
-      const m = getMonths(p);
-      const ph = parsePH(p['pH']);
-      const fmt = arr => arr.length ? arr.map(mName).join(', ') : '—';
+      const m = getMonths(p), ph = parsePH(p['pH']);
       return `<tr onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
         <td style="font-weight:600">${stripStars(p['Naam NL'])}</td>
         <td style="font-size:0.8rem;color:var(--muted)">${fmt(m.binnen)}</td>
         <td style="font-size:0.8rem;color:var(--muted)">${fmt(m.buiten)}</td>
         <td style="font-size:0.8rem;color:var(--muted)">${fmt(m.oogst)}</td>
-        <td>${ph ? phBadge(ph) : '—'}</td>
+        <td>${ph?phBadge(ph):'—'}</td>
         <td style="font-size:0.78rem;color:var(--muted)">${p['Grondtype']||'—'}</td>
       </tr>`;
-    }).join('')}</tbody>
-  </table></div>`;
+    }).join('')}</tbody></table></div>`;
 }
 
-// --- VOEDING VIEW ---
 function renderVoeding() {
   const q = document.getElementById('searchVoeding').value.toLowerCase();
   const data = allData.filter(p => {
     if (q && !stripStars(p['Naam NL']).toLowerCase().includes(q)) return false;
     for (const key of activeVoeding) {
-      const keys = key === 'thee' ? ['thee','"thee"'] : [key];
-      if (getCol(p, ...keys) !== '✅') return false;
+      const keys = key==='thee' ? ['thee','"thee"'] : [key];
+      if (getCol(p,...keys) !== '✅') return false;
     }
     return true;
   });
-  if (!data.length) {
-    document.getElementById('voedingContent').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>Geen resultaten</div>';
-    return;
-  }
-  document.getElementById('voedingContent').innerHTML = data.map(p => {
-    const naam = stripStars(p['Naam NL']);
-    const chips = voedingChips(p);
-    return `<div class="plant-card" style="margin-bottom:10px" onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
-      <div class="card-name">${naam}</div>
-      <div class="voeding-row" style="margin-top:6px">${chips||'—'}</div>
-    </div>`;
-  }).join('');
+  if (!data.length) { document.getElementById('voedingContent').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>Geen resultaten</div>'; return; }
+  document.getElementById('voedingContent').innerHTML = data.map(p =>
+    `<div class="plant-card" style="margin-bottom:10px" onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
+      <div class="card-name">${stripStars(p['Naam NL'])}</div>
+      <div class="voeding-row" style="margin-top:6px">${voedingChips(p)||'—'}</div>
+    </div>`
+  ).join('');
 }
 
-// --- PH VIEW ---
 function renderPH() {
   const q = document.getElementById('searchPH').value.toLowerCase();
-  const data = allData
-    .filter(p => parsePH(p['pH']))
-    .filter(p => !q || stripStars(p['Naam NL']).toLowerCase().includes(q))
+  const data = allData.filter(p => parsePH(p['pH'])).filter(p => !q || stripStars(p['Naam NL']).toLowerCase().includes(q))
     .sort((a,b) => (parsePH(a['pH'])?.min||0) - (parsePH(b['pH'])?.min||0));
-  if (!data.length) {
-    document.getElementById('phContent').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>Geen resultaten</div>';
-    return;
-  }
-  const items = data.map(p => {
-    const ph = parsePH(p['pH']);
-    const c = phColor(ph);
-    const left = ((ph.min - 3.5) / 10.5 * 100).toFixed(1);
-    const width = (((ph.max - ph.min) / 10.5) * 100 + 2).toFixed(1);
-    return `<div class="ph-list-item" onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
-      <div class="ph-name">${stripStars(p['Naam NL'])}</div>
-      <div class="ph-bar-wrap"><div class="ph-bar" style="left:${left}%;width:${width}%;background:${c.bg}"></div></div>
-      <div class="ph-val" style="color:${c.bg}">pH ${ph.label}</div>
-    </div>`;
-  }).join('');
-  document.getElementById('phContent').innerHTML =
-    `<div style="border-radius:12px;border:1.5px solid var(--border);overflow:hidden">${items}</div>`;
+  if (!data.length) { document.getElementById('phContent').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>Geen resultaten</div>'; return; }
+  document.getElementById('phContent').innerHTML = `<div style="border-radius:12px;border:1.5px solid var(--border);overflow:hidden">${
+    data.map(p => {
+      const ph = parsePH(p['pH']), c = phColor(ph);
+      const left = ((ph.min-3.5)/10.5*100).toFixed(1), width = (((ph.max-ph.min)/10.5)*100+2).toFixed(1);
+      return `<div class="ph-list-item" onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
+        <div class="ph-name">${stripStars(p['Naam NL'])}</div>
+        <div class="ph-bar-wrap"><div class="ph-bar" style="left:${left}%;width:${width}%;background:${c.bg}"></div></div>
+        <div class="ph-val" style="color:${c.bg}">pH ${ph.label}</div>
+      </div>`;
+    }).join('')
+  }</div>`;
 }
 
-// --- KALENDER VIEW ---
 function renderKalender() {
   const q = document.getElementById('searchKal').value.toLowerCase();
   const data = allData.filter(p => !q || stripStars(p['Naam NL']).toLowerCase().includes(q));
-  if (!data.length) {
-    document.getElementById('kalenderContent').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>Geen resultaten</div>';
-    return;
-  }
-  const header = `<tr>
-    <th>Plant</th>
-    ${MONTHS.map(m=>`<th>${m}</th>`).join('')}
-  </tr>`;
-  const rows = data.map(p => {
-    const m = getMonths(p);
-    const cells = MONTHS.map((_,i) => {
-      const mn = i+1;
-      let cls = '';
-      if (m.oogst.includes(mn)) cls = 'oogst';
-      else if (m.buiten.includes(mn)) cls = 'buiten';
-      else if (m.binnen.includes(mn)) cls = 'binnen';
-      return `<td><div class="cal-dot ${cls}"></div></td>`;
-    }).join('');
-    return `<tr onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
-      <td>${stripStars(p['Naam NL'])}</td>${cells}
-    </tr>`;
-  }).join('');
+  if (!data.length) { document.getElementById('kalenderContent').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>Geen resultaten</div>'; return; }
   document.getElementById('kalenderContent').innerHTML = `
     <div class="cal-legend">
       <span><span class="legend-dot" style="background:var(--moss)"></span>Zaai Binnen</span>
       <span><span class="legend-dot" style="background:var(--sun)"></span>Zaai Buiten</span>
       <span><span class="legend-dot" style="background:var(--bark)"></span>Oogst</span>
     </div>
-    <div class="cal-wrap">
-      <table class="cal-table"><thead>${header}</thead><tbody>${rows}</tbody></table>
-    </div>`;
+    <div class="cal-wrap"><table class="cal-table">
+      <thead><tr><th>Plant</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}</tr></thead>
+      <tbody>${data.map(p => {
+        const m = getMonths(p);
+        return `<tr onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
+          <td>${stripStars(p['Naam NL'])}</td>
+          ${MONTHS.map((_,i) => {
+            const mn=i+1;
+            let cls = m.oogst.includes(mn)?'oogst':m.buiten.includes(mn)?'buiten':m.binnen.includes(mn)?'binnen':'';
+            return `<td><div class="cal-dot ${cls}"></div></td>`;
+          }).join('')}
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>`;
 }
 
-// --- FILTER PLANTEN ---
 function filterPlanten() {
   const q = document.getElementById('searchPlanten').value.toLowerCase();
-  const fB  = document.getElementById('filterBinnen').value;
+  const fB = document.getElementById('filterBinnen').value;
   const fBu = document.getElementById('filterBuiten').value;
-  const fO  = document.getElementById('filterOogst').value;
-  const fG  = document.getElementById('filterGrond').value;
+  const fO = document.getElementById('filterOogst').value;
+  const fG = document.getElementById('filterGrond').value;
   return allData.filter(p => {
     if (q && !stripStars(p['Naam NL']).toLowerCase().includes(q)) return false;
     const m = getMonths(p);
@@ -578,120 +487,71 @@ function filterPlanten() {
     return true;
   });
 }
-
 function renderPlanten() {
   const data = filterPlanten();
   document.getElementById('resultCount').textContent = `${data.length} planten`;
-  const el = document.getElementById('plantenContent');
-  el.innerHTML = currentView === 'cards' ? renderCards(data) : renderTable(data);
+  document.getElementById('plantenContent').innerHTML = currentView==='cards' ? renderCards(data) : renderTable(data);
 }
 
-// --- POPULATE FILTERS ---
 function populateFilters() {
   const binnen=new Set(), buiten=new Set(), oogst=new Set(), grond=new Set();
   allData.forEach(p => {
     const m = getMonths(p);
-    m.binnen.forEach(x=>binnen.add(x));
-    m.buiten.forEach(x=>buiten.add(x));
-    m.oogst.forEach(x=>oogst.add(x));
+    m.binnen.forEach(x=>binnen.add(x)); m.buiten.forEach(x=>buiten.add(x)); m.oogst.forEach(x=>oogst.add(x));
     if (p['Grondtype']) p['Grondtype'].split(/[,;\/]+/).forEach(g=>grond.add(g.trim()));
   });
   const fillMonth = (id, set) => {
     const sel = document.getElementById(id);
-    [...set].sort((a,b)=>a-b).forEach(m => {
-      const o = document.createElement('option'); o.value=m; o.textContent=mName(m); sel.appendChild(o);
-    });
+    [...set].sort((a,b)=>a-b).forEach(m => { const o=document.createElement('option'); o.value=m; o.textContent=mName(m); sel.appendChild(o); });
   };
-  fillMonth('filterBinnen', binnen);
-  fillMonth('filterBuiten', buiten);
-  fillMonth('filterOogst', oogst);
+  fillMonth('filterBinnen',binnen); fillMonth('filterBuiten',buiten); fillMonth('filterOogst',oogst);
   const gs = document.getElementById('filterGrond');
   [...grond].sort().forEach(g => { const o=document.createElement('option'); o.value=g; o.textContent=g; gs.appendChild(o); });
 }
 
-// --- MODAL ---
 function openModal(el) {
   const p = JSON.parse(el.dataset.plant.replace(/&#39;/g,"'"));
-  const m = getMonths(p);
-  const ph = parsePH(p['pH']);
-  const comp = parseCompanion(getCol(p, 'Companion Plants'));
-  const nietNa   = getCol(p, 'Niet na  (jaar ervoor)', 'Niet na (jaar ervoor)').replace(/\*\*/g,'').trim();
-  const nietVoor = getCol(p, 'Niet voor (jaar erna)').replace(/\*\*/g,'').trim();
+  const m = getMonths(p), ph = parsePH(p['pH']);
+  const comp = parseCompanion(getCol(p,'Companion Plants'));
+  const nietNa   = getCol(p,'Niet na  (jaar ervoor)','Niet na (jaar ervoor)').replace(/\*\*/g,'').trim();
+  const nietVoor = getCol(p,'Niet voor (jaar erna)').replace(/\*\*/g,'').trim();
+  const beschr   = (p['Beschrijving ']||p['Beschrijving']||'').trim();
 
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-name">${stripStars(p['Naam NL'])}</div>
-
-    <!-- Zaai & Oogst -->
     <div class="modal-section">
       <div class="modal-section-title">📅 Zaai & Oogst</div>
       <div class="modal-row">
-        ${m.binnen.length ? `<div class="modal-block">
-          <div class="modal-block-label">🏠 Zaai Binnen</div>
-          <div class="m-pills">${pills(m.binnen,'binnen')}</div>
-        </div>` : ''}
-        ${m.buiten.length ? `<div class="modal-block">
-          <div class="modal-block-label">☀️ Zaai Buiten</div>
-          <div class="m-pills">${pills(m.buiten,'buiten')}</div>
-        </div>` : ''}
-        ${m.oogst.length ? `<div class="modal-block">
-          <div class="modal-block-label">🥬 Oogst</div>
-          <div class="m-pills">${pills(m.oogst,'oogst')}</div>
-        </div>` : ''}
+        ${m.binnen.length?`<div class="modal-block"><div class="modal-block-label">🏠 Zaai Binnen</div><div class="m-pills">${pills(m.binnen,'binnen')}</div></div>`:''}
+        ${m.buiten.length?`<div class="modal-block"><div class="modal-block-label">☀️ Zaai Buiten</div><div class="m-pills">${pills(m.buiten,'buiten')}</div></div>`:''}
+        ${m.oogst.length ?`<div class="modal-block"><div class="modal-block-label">🥬 Oogst</div><div class="m-pills">${pills(m.oogst,'oogst')}</div></div>`:''}
       </div>
     </div>
-
-    <!-- Voeding -->
     <div class="modal-section">
       <div class="modal-section-title">🌱 Plantvoeding</div>
-      <div class="modal-block">
-        <div class="voeding-row">${voedingChips(p)||'<span style="color:var(--muted)">—</span>'}</div>
-      </div>
+      <div class="modal-block"><div class="voeding-row">${voedingChips(p)||'<span style="color:var(--muted)">—</span>'}</div></div>
     </div>
-
-    <!-- Bodem -->
-    ${ph||p['Grondtype'] ? `<div class="modal-section">
+    ${ph||p['Grondtype']?`<div class="modal-section">
       <div class="modal-section-title">🪱 Bodem</div>
       <div class="modal-row">
-        ${ph ? `<div class="modal-block">
-          <div class="modal-block-label">Zuurgraad (pH)</div>
-          <div class="modal-block-value">${phBadge(ph, true)}<span style="font-size:0.75rem;color:var(--muted);margin-left:8px">${phColor(ph).label}</span></div>
-        </div>` : ''}
-        ${p['Grondtype'] ? `<div class="modal-block">
-          <div class="modal-block-label">Grondtype</div>
-          <div class="modal-block-value" style="font-size:0.9rem">${p['Grondtype']}</div>
-        </div>` : ''}
+        ${ph?`<div class="modal-block"><div class="modal-block-label">Zuurgraad (pH)</div><div class="modal-block-value">${phBadge(ph,true)}<span style="font-size:0.75rem;color:var(--muted);margin-left:8px">${phColor(ph).label}</span></div></div>`:''}
+        ${p['Grondtype']?`<div class="modal-block"><div class="modal-block-label">Grondtype</div><div class="modal-block-value" style="font-size:0.9rem">${p['Grondtype']}</div></div>`:''}
       </div>
-    </div>` : ''}
-
-    <!-- Companion plants -->
-    ${comp&&(comp.plants.length||comp.family) ? `<div class="modal-section">
+    </div>`:''}
+    ${comp&&(comp.plants.length||comp.family)?`<div class="modal-section">
       <div class="modal-section-title">🤝 Goede Buren</div>
       <div class="modal-block">
-        ${comp.family ? `<div class="companion-family">Familie: ${comp.family}</div>` : ''}
-        ${comp.plants.length ? `<div class="companion-tags">${comp.plants.map(pl=>`<span class="companion-tag">${pl}</span>`).join('')}</div>` : ''}
+        ${comp.family?`<div class="companion-family">Familie: ${comp.family}</div>`:''}
+        ${comp.plants.length?`<div class="companion-tags">${comp.plants.map(pl=>`<span class="companion-tag">${pl}</span>`).join('')}</div>`:''}
       </div>
-    </div>` : ''}
-
-    <!-- Vruchtwisseling -->
-    ${nietNa||nietVoor ? `<div class="modal-section">
+    </div>`:''}
+    ${nietNa||nietVoor?`<div class="modal-section">
       <div class="modal-section-title">🔄 Wisselgewas</div>
-      ${nietNa ? `<div style="margin-bottom:6px">
-        <div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:4px">NIET NA (jaar ervoor)</div>
-        ${nietNa.split(/[,;]+/).map(s=>`<span class="warn-tag">⚠️ ${s.trim()}</span>`).join('')}
-      </div>` : ''}
-      ${nietVoor ? `<div>
-        <div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:4px">NIET VOOR (jaar erna)</div>
-        ${nietVoor.split(/[,;]+/).map(s=>`<span class="warn-tag">⚠️ ${s.trim()}</span>`).join('')}
-      </div>` : ''}
-    </div>` : ''}
-
-    <!-- Beschrijving -->
-    ${p['Beschrijving ']||p['Beschrijving'] ? `<div class="modal-section">
-      <div class="modal-section-title">📖 Beschrijving</div>
-      <div class="modal-block modal-desc">${p['Beschrijving ']||p['Beschrijving']}</div>
-    </div>` : ''}
-
-    ${p['link'] ? `<a class="modal-link" href="${p['link']}" target="_blank">🔗 Meer informatie</a>` : ''}
+      ${nietNa?`<div style="margin-bottom:6px"><div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:4px">NIET NA (jaar ervoor)</div>${nietNa.split(/[,;]+/).map(s=>`<span class="warn-tag">⚠️ ${s.trim()}</span>`).join('')}</div>`:''}
+      ${nietVoor?`<div><div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:4px">NIET VOOR (jaar erna)</div>${nietVoor.split(/[,;]+/).map(s=>`<span class="warn-tag">⚠️ ${s.trim()}</span>`).join('')}</div>`:''}
+    </div>`:''}
+    ${beschr?`<div class="modal-section"><div class="modal-section-title">📖 Beschrijving</div><div class="modal-block modal-desc">${beschr}</div></div>`:''}
+    ${p['link']?`<a class="modal-link" href="${p['link']}" target="_blank">🔗 Meer informatie</a>`:''}
   `;
   document.getElementById('modalOverlay').classList.add('open');
 }
@@ -699,73 +559,48 @@ function openModal(el) {
 document.getElementById('modalClose').onclick = () => document.getElementById('modalOverlay').classList.remove('open');
 document.getElementById('modalOverlay').onclick = e => { if (e.target===e.currentTarget) document.getElementById('modalOverlay').classList.remove('open'); };
 
-// --- EVENTS ---
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    ['planten','voeding','ph','kalender'].forEach(id => {
-      document.getElementById('tab-'+id).style.display = tab.dataset.tab===id ? '' : 'none';
-    });
-  });
-});
-
-document.querySelectorAll('.view-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    currentView = btn.dataset.view;
-    renderPlanten();
-  });
-});
+document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active');
+  ['planten','voeding','ph','kalender'].forEach(id => document.getElementById('tab-'+id).style.display = tab.dataset.tab===id?'':'none');
+}));
+document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  currentView = btn.dataset.view; renderPlanten();
+}));
 
 document.getElementById('searchPlanten').addEventListener('input', renderPlanten);
 document.getElementById('filterBinnen').addEventListener('change', renderPlanten);
 document.getElementById('filterBuiten').addEventListener('change', renderPlanten);
 document.getElementById('filterOogst').addEventListener('change', renderPlanten);
 document.getElementById('filterGrond').addEventListener('change', renderPlanten);
-
 document.getElementById('searchVoeding').addEventListener('input', renderVoeding);
 document.getElementById('searchPH').addEventListener('input', renderPH);
 document.getElementById('searchKal').addEventListener('input', renderKalender);
 
-document.querySelectorAll('.vf-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const key = btn.dataset.voeding;
-    if (activeVoeding.has(key)) { activeVoeding.delete(key); btn.classList.remove('active'); }
-    else { activeVoeding.add(key); btn.classList.add('active'); }
-    renderVoeding();
-  });
-});
+document.querySelectorAll('.vf-btn').forEach(btn => btn.addEventListener('click', () => {
+  const key = btn.dataset.voeding;
+  if (activeVoeding.has(key)) { activeVoeding.delete(key); btn.classList.remove('active'); }
+  else { activeVoeding.add(key); btn.classList.add('active'); }
+  renderVoeding();
+}));
 
 document.getElementById('themeBtn').addEventListener('click', () => {
-  const html = document.documentElement;
-  const dark = html.getAttribute('data-theme')==='dark';
-  html.setAttribute('data-theme', dark?'light':'dark');
+  const dark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', dark?'light':'dark');
   document.getElementById('themeBtn').textContent = dark?'🌙':'☀️';
 });
 
-// --- INIT ---
 async function init() {
   try {
     const res = await fetch(URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    allData = parseTSV(text);
-    populateFilters();
-    renderPlanten();
-    renderVoeding();
-    renderPH();
-    renderKalender();
+    allData = parseTSV(await res.text());
+    populateFilters(); renderPlanten(); renderVoeding(); renderPH(); renderKalender();
   } catch(e) {
-    const msg = `<div class="state-msg"><div class="icon">⚠️</div>Kon data niet laden van Google Sheets.<br><small>${e.message}</small><br><br>
-      <small>Controleer of het sheet openbaar is (Delen → Iedereen met link → Viewer)</small></div>`;
-    ['plantenContent','voedingContent','phContent','kalenderContent'].forEach(id => {
-      document.getElementById(id).innerHTML = msg;
-    });
+    const msg = `<div class="state-msg"><div class="icon">⚠️</div>Kon data niet laden.<br><small>${e.message}</small><br><br><small>Controleer of het sheet openbaar is</small></div>`;
+    ['plantenContent','voedingContent','phContent','kalenderContent'].forEach(id => document.getElementById(id).innerHTML = msg);
   }
 }
-
 init();
 </script>
 </body>
