@@ -179,7 +179,23 @@
   .companion-tag { background: var(--moss-lt); color: var(--tag-green-t); font-size: 0.78rem; font-weight: 600; padding: 3px 9px; border-radius: 6px; }
   .modal-link { display: inline-flex; align-items: center; gap: 6px; color: var(--moss); font-weight: 600; font-size: 0.9rem; text-decoration: none; margin-top: 14px; }
 
-  @media (max-width: 480px) {
+  .plant-card.alg-card {
+    background: var(--sun-lt);
+    border-color: var(--sun);
+    border-left: 4px solid var(--sun);
+  }
+  [data-theme="dark"] .plant-card.alg-card {
+    background: #2a2010;
+    border-color: var(--sun);
+  }
+  .alg-divider {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 10px;
+    margin: 8px 0 4px;
+    color: var(--muted); font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .alg-divider::after { content:''; flex:1; height:1px; background:var(--border); }
     .cards-grid { grid-template-columns: 1fr; }
     main { padding: 10px; }
     .ph-name { min-width: 100px; }
@@ -252,6 +268,8 @@
       <button class="vf-btn" data-voeding="Koffiedik">Koffiedik</button>
       <button class="vf-btn" data-voeding="Eierschalen">Eierschalen</button>
       <button class="vf-btn" data-voeding="Houtas">Houtas</button>
+      <button class="vf-btn" data-voeding="Bananenschil">Bananenschil</button>
+      <button class="vf-btn" data-voeding="Grasmaaisel">Grasmaaisel</button>
     </div>
   </div>
   <main id="voedingContent" style="padding:14px">
@@ -359,11 +377,13 @@ function voedingStatus(val) {
 }
 function voedingChips(p) {
   const items = [
-    [['Compost'],           'Compost'],
-    [['thee','"thee"'],     'Plantenthee'],
-    [['Koffiedik'],         'Koffiedik'],
-    [['Eierschalen'],       'Eierschalen'],
-    [['Houtas'],            'Houtas'],
+    [['Compost'],                    'Compost'],
+    [['thee','"thee"'],              'Plantenthee'],
+    [['Koffiedik'],                  'Koffiedik'],
+    [['Eierschalen'],                'Eierschalen'],
+    [['Houtas'],                     'Houtas'],
+    [['Bananenschil','Banaan schil','Banaan\nschil'], 'Bananenschil'],
+    [['Grasmaaisel','Gras maaisel','Gras\nmaaisel'],  'Grasmaaisel'],
   ];
   return items.map(([keys, label]) => {
     const val = getCol(p, ...keys);
@@ -418,23 +438,31 @@ function parseCompanion(s) {
 }
 
 // --- CARDS ---
+function isAlg(p) { return /^Alg[.,]/i.test((p['Naam NL']||'').trim()); }
+
 function renderCards(data) {
   if (!data.length) return '<div class="state-msg"><div class="icon">🔍</div>Geen planten gevonden</div>';
-  return `<div class="cards-grid">${data.map(p => {
+  const normal = data.filter(p => !isAlg(p));
+  const alg    = data.filter(p =>  isAlg(p));
+
+  const makeCard = (p) => {
     const m = getMonths(p);
     const ph = parsePH(p['pH']);
     const grond = p['Grondtype']||'';
-    return `<div class="plant-card" onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
+    const algemeen = isAlg(p);
+    const beschr = (p['Beschrijving ']||p['Beschrijving']||'').trim();
+    return `<div class="plant-card${algemeen?' alg-card':''}" onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
       <div class="card-name">${stripStars(p['Naam NL'])}</div>
-      ${m.binnen.length||m.buiten.length ? `<div class="card-section">
+      ${algemeen && beschr ? `<div style="font-size:0.83rem;color:var(--muted);line-height:1.5;margin:6px 0 4px">${beschr}</div>` : ''}
+      ${!algemeen && (m.binnen.length||m.buiten.length) ? `<div class="card-section">
         <div class="card-section-label">🏠 Zaai Binnen</div>
         <div class="m-pills">${pills(m.binnen,'binnen')}</div>
       </div>` : ''}
-      ${m.buiten.length ? `<div class="card-section">
+      ${!algemeen && m.buiten.length ? `<div class="card-section">
         <div class="card-section-label">☀️ Zaai Buiten</div>
         <div class="m-pills">${pills(m.buiten,'buiten')}</div>
       </div>` : ''}
-      ${m.oogst.length ? `<div class="card-section">
+      ${!algemeen && m.oogst.length ? `<div class="card-section">
         <div class="card-section-label">🥬 Oogst</div>
         <div class="m-pills">${pills(m.oogst,'oogst')}</div>
       </div>` : ''}
@@ -447,7 +475,13 @@ function renderCards(data) {
         ${grond ? `<span class="grond-badge">🪱 ${grond}</span>` : ''}
       </div>` : ''}
     </div>`;
-  }).join('')}</div>`;
+  };
+
+  const normalHtml = normal.map(makeCard).join('');
+  const algHtml = alg.length
+    ? `<div class="alg-divider">📋 Algemeen (${alg.length})</div>${alg.map(makeCard).join('')}`
+    : '';
+  return `<div class="cards-grid">${normalHtml}${algHtml}</div>`;
 }
 
 // --- TABLE ---
@@ -479,7 +513,12 @@ function renderVoeding() {
   const data = allData.filter(p => {
     if (q && !stripStars(p['Naam NL']).toLowerCase().includes(q)) return false;
     for (const key of activeVoeding) {
-      const keys = key === 'thee' ? ['thee','"thee"'] : [key];
+      const keyMap = {
+        'thee': ['thee','"thee"'],
+        'Bananenschil': ['Bananenschil','Banaan schil','Banaan\nschil'],
+        'Grasmaaisel':  ['Grasmaaisel','Gras maaisel','Gras\nmaaisel'],
+      };
+      const keys = keyMap[key] || [key];
       if (getCol(p, ...keys) !== '✅') return false;
     }
     return true;
