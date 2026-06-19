@@ -3,8 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌱 Kweekkompas v4</title>
-<!-- versie: v4 | datum: 2026-06-17 | bron: Google Sheets GID 2046388932 -->
+<title>🌱 Kweekkompas v5</title>
+<meta name="theme-color" content="#4a7c59">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kweekkompas">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- versie: v5 | datum: 2026-06-17 | bron: Google Sheets GID 2046388932 -->
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
 
@@ -602,6 +608,15 @@ async function init() {
   }
 }
 init();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/planten/sw.js')
+      .then(r => console.log('SW geregistreerd:', r.scope))
+      .catch(e => console.log('SW fout:', e));
+  });
+}
 </script>
 </body>
 </html>
