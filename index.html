@@ -3,8 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌱 Kweekkompas v4</title>
-<!-- versie: v4 | datum: 2026-06-17 | bron: Google Sheets GID 2046388932 -->
+<title>🌱 Kweekkompas v6</title>
+<meta name="theme-color" content="#4a7c59">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kweekkompas">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- versie: v6 | datum: 2026-06-17 | bron: Google Sheets GID 2046388932 -->
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
 
@@ -180,6 +186,21 @@
   }
   .alg-section-header::after { content:''; flex:1; height:1px; background:var(--border); }
 
+  /* BOOSTER kaartjes */
+  .booster-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 15px; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+  .booster-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59,42,26,0.15); }
+  .booster-card.active-filter { border-color: var(--moss); box-shadow: 0 0 0 2px var(--moss); }
+  .booster-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .booster-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .booster-name { font-family: 'DM Serif Display', serif; font-size: 1.1rem; line-height: 1.2; }
+  .booster-section { margin-top: 8px; }
+  .booster-section-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 4px; }
+  .booster-text { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+  .plant-tag { display: inline-block; background: var(--moss-lt); color: var(--tag-green-t); font-size: 0.73rem; font-weight: 600; padding: 2px 8px; border-radius: 5px; margin: 2px; cursor: pointer; transition: background 0.15s; }
+  .plant-tag:hover { background: var(--moss); color: white; }
+  .active-booster-filter { background: var(--sun-lt); border: 1.5px solid var(--sun); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 0.83rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .clear-filter-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: 0; }
+
   @media (max-width: 480px) {
     .cards-grid { grid-template-columns: 1fr; }
     main { padding: 10px; }
@@ -201,6 +222,7 @@
   <button class="tab" data-tab="voeding">Voeding</button>
   <button class="tab" data-tab="ph">PH-lijst</button>
   <button class="tab" data-tab="kalender">Kalender</button>
+  <button class="tab" data-tab="boosters">Boosters</button>
 </div>
 
 <div id="tab-planten">
@@ -249,6 +271,13 @@
   <main id="kalenderContent" style="padding:14px"><div class="state-msg"><div class="icon">🌿</div>Laden…</div></main>
 </div>
 
+<div id="tab-boosters" style="display:none">
+  <div class="toolbar">
+    <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" id="searchBooster" type="search" placeholder="Zoek op booster of voedingsstof…" autocomplete="off"></div>
+  </div>
+  <main id="boosterContent" style="padding:14px"><div class="state-msg"><div class="icon">🌿</div>Laden…</div></main>
+</div>
+
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-handle-wrap"><div class="modal-handle"></div><button class="modal-close" id="modalClose">✕</button></div>
@@ -259,10 +288,13 @@
 <script>
 const MONTHS = ['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
 const SHEET_ID = '1r0bIlNZ4NzrXnN7d8hea5-e9axrg5aYnhUJ_8E0GVS4';
-const GID = '2046388932';
-const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=tsv&gid=${GID}`;
+const GID      = '2046388932';
+const GID_BOOST= '1167405424';
+const URL       = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=tsv&gid=${GID}`;
+const URL_BOOST = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=tsv&gid=${GID_BOOST}`;
 
-let allData = [], activeVoeding = new Set(), currentView = 'cards';
+let allData = [], boosterData = [], activeVoeding = new Set(), currentView = 'cards';
+let activePlantFilter = null; // voor booster→plant koppeling
 
 function parseTSV(text) {
   const lines = text.trim().split('\n');
@@ -390,11 +422,73 @@ function renderCards(data) {
   return html;
 }
 
+function boosterIcon(naam) {
+  const n = (naam||'').toLowerCase();
+  if (n.includes('banaan'))    return '🍌';
+  if (n.includes('koffie'))    return '☕';
+  if (n.includes('thee'))      return '🍵';
+  if (n.includes('compost'))   return '♻️';
+  if (n.includes('eier'))      return '🥚';
+  if (n.includes('hout') || n.includes('as')) return '🪵';
+  if (n.includes('gras'))      return '🌿';
+  if (n.includes('nering') || n.includes('mest')) return '💩';
+  return '🌱';
+}
+
+function renderBoosters() {
+  const q = document.getElementById('searchBooster').value.toLowerCase();
+  let data = boosterData.filter(b => {
+    if (!q) return true;
+    return (b['Booster']||'').toLowerCase().includes(q) ||
+           (b['Voedingsstof Werking']||'').toLowerCase().includes(q) ||
+           (b['voor welke Planten']||'').toLowerCase().includes(q);
+  });
+  if (!data.length) {
+    document.getElementById('boosterContent').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>Geen boosters gevonden</div>';
+    return;
+  }
+  document.getElementById('boosterContent').innerHTML = `<div class="cards-grid">${data.map(b => {
+    const naam = stripStars(b['Booster']||'');
+    const werking = b['Voedingsstof Werking']||'';
+    const voordeel = b['Voordeel Plant']||'';
+    const planten = (b['voor welke Planten']||'').split(/[,;]+/).map(s=>stripStars(s).trim()).filter(Boolean);
+    const tip = b['Toepassingstip']||'';
+    const icon = boosterIcon(naam);
+    const plantTags = planten.map(pl =>
+      `<span class="plant-tag" onclick="filterPlantenOpBooster('${pl.replace(/'/g,"&#39;")}',event)">${pl}</span>`
+    ).join('');
+    return `<div class="booster-card" data-booster='${JSON.stringify(b).replace(/'/g,"&#39;")}'>
+      <div class="booster-header">
+        <div class="booster-icon">${icon}</div>
+        <div class="booster-name">${naam}</div>
+      </div>
+      ${werking ? `<div class="booster-section"><div class="booster-section-label">💊 Voedingsstof</div><div class="booster-text">${werking}</div></div>` : ''}
+      ${voordeel ? `<div class="booster-section"><div class="booster-section-label">✅ Voordeel</div><div class="booster-text">${voordeel}</div></div>` : ''}
+      ${planten.length ? `<div class="booster-section"><div class="booster-section-label">🌿 Geschikt voor</div><div style="margin-top:4px">${plantTags}</div></div>` : ''}
+      ${tip ? `<div class="booster-section"><div class="booster-section-label">💡 Toepassingstip</div><div class="booster-text">${tip}</div></div>` : ''}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function filterPlantenOpBooster(plantnaam, event) {
+  event.stopPropagation();
+  activePlantFilter = plantnaam;
+  // switch naar planten tab
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('[data-tab="planten"]').classList.add('active');
+  ['planten','voeding','ph','kalender','boosters'].forEach(id =>
+    document.getElementById('tab-'+id).style.display = id==='planten' ? '' : 'none'
+  );
+  // zet zoekbalk
+  document.getElementById('searchPlanten').value = plantnaam;
+  renderPlanten();
+}
+
 function renderTable(data) {
   if (!data.length) return '<div class="state-msg"><div class="icon">🔍</div>Geen planten gevonden</div>';
   const fmt = arr => arr.length ? arr.map(mName).join(', ') : '—';
   return `<div class="table-wrap"><table>
-    <thead><tr><th>Naam</th><th>Zaai Binnen</th><th>Zaai Buiten</th><th>Oogst</th><th>pH</th><th>Grond</th></tr></thead>
+    <thead><tr><th>Naam</th><th>Zaai Binnen</th><th>Zaai Buiten</th><th>Oogst</th><th>pH</th><th>Grond</th><th>Voeding</th></tr></thead>
     <tbody>${data.map(p => {
       const m = getMonths(p), ph = parsePH(p['pH']);
       return `<tr onclick="openModal(this)" data-plant='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
@@ -404,6 +498,7 @@ function renderTable(data) {
         <td style="font-size:0.8rem;color:var(--muted)">${fmt(m.oogst)}</td>
         <td>${ph?phBadge(ph):'—'}</td>
         <td style="font-size:0.78rem;color:var(--muted)">${p['Grondtype']||'—'}</td>
+        <td><div class="voeding-row">${voedingChips(p)||'—'}</div></td>
       </tr>`;
     }).join('')}</tbody></table></div>`;
 }
@@ -561,7 +656,7 @@ document.getElementById('modalOverlay').onclick = e => { if (e.target===e.curren
 
 document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active');
-  ['planten','voeding','ph','kalender'].forEach(id => document.getElementById('tab-'+id).style.display = tab.dataset.tab===id?'':'none');
+  ['planten','voeding','ph','kalender','boosters'].forEach(id => document.getElementById('tab-'+id).style.display = tab.dataset.tab===id?'':'none');
 }));
 document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', () => {
   document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
@@ -575,6 +670,7 @@ document.getElementById('filterOogst').addEventListener('change', renderPlanten)
 document.getElementById('filterGrond').addEventListener('change', renderPlanten);
 document.getElementById('searchVoeding').addEventListener('input', renderVoeding);
 document.getElementById('searchPH').addEventListener('input', renderPH);
+document.getElementById('searchBooster').addEventListener('input', renderBoosters);
 document.getElementById('searchKal').addEventListener('input', renderKalender);
 
 document.querySelectorAll('.vf-btn').forEach(btn => btn.addEventListener('click', () => {
@@ -600,8 +696,26 @@ async function init() {
     const msg = `<div class="state-msg"><div class="icon">⚠️</div>Kon data niet laden.<br><small>${e.message}</small><br><br><small>Controleer of het sheet openbaar is</small></div>`;
     ['plantenContent','voedingContent','phContent','kalenderContent'].forEach(id => document.getElementById(id).innerHTML = msg);
   }
+  try {
+    const res2 = await fetch(URL_BOOST);
+    if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
+    boosterData = parseTSV(await res2.text());
+    renderBoosters();
+  } catch(e) {
+    document.getElementById('boosterContent').innerHTML =
+      `<div class="state-msg"><div class="icon">⚠️</div>Kon booster-data niet laden.<br><small>${e.message}</small></div>`;
+  }
 }
 init();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/planten/sw.js')
+      .then(r => console.log('SW geregistreerd:', r.scope))
+      .catch(e => console.log('SW fout:', e));
+  });
+}
 </script>
 </body>
 </html>
