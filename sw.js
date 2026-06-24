@@ -1,5 +1,5 @@
-// Kweekkompas Service Worker v5
-const CACHE = 'kweekkompas-v5';
+// Kweekkompas Service Worker v6
+const CACHE = 'kweekkompas-v6';
 const ASSETS = [
   '/planten/',
   '/planten/index.html',
