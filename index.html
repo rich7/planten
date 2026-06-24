@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌱 Kweekkompas v6</title>
+<title>🌱 Kweekkompas v6.1</title>
 <meta name="theme-color" content="#4a7c59">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -211,7 +211,7 @@
 <body>
 
 <header>
-  <div class="logo">🌱 Kweekkompas</div>
+  <div class="logo">🌱 Kweekkompas 6.1</div>
   <div style="display:flex;gap:8px">
     <button class="btn-icon" id="themeBtn" title="Donkere modus">🌙</button>
   </div>
@@ -296,14 +296,14 @@ const URL_BOOST = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?for
 let allData = [], boosterData = [], activeVoeding = new Set(), currentView = 'cards';
 let activePlantFilter = null; // voor booster→plant koppeling
 
-function parseTSV(text) {
+function parseTSV(text, vereistVeld=null) {
   const lines = text.trim().split('\n');
   const headers = lines[0].split('\t').map(h => h.trim().replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').replace(/^"|"$/g,''));
   return lines.slice(1).map(line => {
     const vals = line.split('\t'), obj = {};
     headers.forEach((h,i) => obj[h] = (vals[i]||'').trim().replace(/^"|"$/g,''));
     return obj;
-  }).filter(r => Object.values(r).some(v => v) && r['Naam NL']);
+  }).filter(r => Object.values(r).some(v => v) && (!vereistVeld || r[vereistVeld]));
 }
 
 function monthRange(from, to) {
@@ -690,7 +690,7 @@ async function init() {
   try {
     const res = await fetch(URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    allData = parseTSV(await res.text());
+    allData = parseTSV(await res.text(), 'Naam NL');
     populateFilters(); renderPlanten(); renderVoeding(); renderPH(); renderKalender();
   } catch(e) {
     const msg = `<div class="state-msg"><div class="icon">⚠️</div>Kon data niet laden.<br><small>${e.message}</small><br><br><small>Controleer of het sheet openbaar is</small></div>`;
@@ -699,9 +699,14 @@ async function init() {
   try {
     const res2 = await fetch(URL_BOOST);
     if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
-    boosterData = parseTSV(await res2.text());
+    const txt2 = await res2.text();
+    console.log('Booster TSV eerste 200 tekens:', txt2.substring(0,200));
+    boosterData = parseTSV(txt2, 'Booster');
+    console.log('Boosters geladen:', boosterData.length, 'rijen');
+    console.log('Eerste booster:', JSON.stringify(boosterData[0]));
     renderBoosters();
   } catch(e) {
+    console.error('Booster fout:', e);
     document.getElementById('boosterContent').innerHTML =
       `<div class="state-msg"><div class="icon">⚠️</div>Kon booster-data niet laden.<br><small>${e.message}</small></div>`;
   }
