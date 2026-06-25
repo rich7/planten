@@ -3,14 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌱 Kweekkompas v6.1</title>
-<meta name="theme-color" content="#4a7c59">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Kweekkompas">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<!-- versie: v6 | datum: 2026-06-17 | bron: Google Sheets GID 2046388932 -->
+<title>🌱 Kweekkompas v7</title>
+<!-- versie: v7 | datum: 2026-06-25 | bron: Google Sheets GID 2046388932 -->
+<!-- PWA tijdelijk verwijderd tijdens ontwikkeling - terugzetten in definitieve versie -->
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
 
@@ -211,7 +206,7 @@
 <body>
 
 <header>
-  <div class="logo">🌱 Kweekkompas 6.1</div>
+  <div class="logo">🌱 Kweekkompas</div>
   <div style="display:flex;gap:8px">
     <button class="btn-icon" id="themeBtn" title="Donkere modus">🌙</button>
   </div>
@@ -256,6 +251,8 @@
       <button class="vf-btn" data-voeding="Koffiedik">Koffiedik</button>
       <button class="vf-btn" data-voeding="Eierschalen">Eierschalen</button>
       <button class="vf-btn" data-voeding="Houtas">Houtas</button>
+      <button class="vf-btn" data-voeding="Bananenschil">Bananenschil</button>
+      <button class="vf-btn" data-voeding="Grasmaaisel">Grasmaaisel</button>
     </div>
   </div>
   <main id="voedingContent" style="padding:14px"><div class="state-msg"><div class="icon">🌿</div>Laden…</div></main>
@@ -339,23 +336,28 @@ function getCol(p, ...candidates) {
 }
 
 function voedingStatus(val) {
-  if (val==='✅') return 'yes';
-  if (val==='⚠️') return 'warn';
-  if (val==='❌') return 'no';
+  if (val==='✅✅') return 'strong';
+  if (val==='✅')   return 'yes';
+  if (val==='⚠️')  return 'warn';
+  if (val==='❌')   return 'no';
   return null;
 }
 function voedingChips(p) {
   const items = [
-    [['Compost'],'Compost'],
-    [['thee','"thee"'],'Plantenthee'],
-    [['Koffiedik'],'Koffiedik'],
-    [['Eierschalen'],'Eierschalen'],
-    [['Houtas'],'Houtas'],
+    [['Compost'],                                      'Compost'],
+    [['thee','"thee"'],                                'Plantenthee'],
+    [['Koffiedik'],                                    'Koffiedik'],
+    [['Eierschalen'],                                  'Eierschalen'],
+    [['Houtas'],                                       'Houtas'],
+    [['Bananenschil','Banaan schil','Banaan\nschil'],  'Bananenschil'],
+    [['Grasmaaisel','Gras maaisel','Gras\nmaaisel'],   'Grasmaaisel'],
   ];
   return items.map(([keys,label]) => {
     const s = voedingStatus(getCol(p,...keys));
     if (!s) return '';
-    return `<span class="v-chip ${s}">${s==='yes'?'✅':s==='warn'?'⚠️':'❌'} ${label}</span>`;
+    const emoji = s==='strong'?'✅✅':s==='yes'?'✅':s==='warn'?'⚠️':'❌';
+    const cls   = s==='strong'?'yes':s; // strong gebruikt zelfde groene stijl
+    return `<span class="v-chip ${cls}">${emoji} ${label}</span>`;
   }).join('');
 }
 
@@ -508,8 +510,14 @@ function renderVoeding() {
   const data = allData.filter(p => {
     if (q && !stripStars(p['Naam NL']).toLowerCase().includes(q)) return false;
     for (const key of activeVoeding) {
-      const keys = key==='thee' ? ['thee','"thee"'] : [key];
-      if (getCol(p,...keys) !== '✅') return false;
+      const keyMap = {
+        'thee':        ['thee','"thee"'],
+        'Bananenschil':['Bananenschil','Banaan schil','Banaan\nschil'],
+        'Grasmaaisel': ['Grasmaaisel','Gras maaisel','Gras\nmaaisel'],
+      };
+      const keys = keyMap[key] || [key];
+      const val = getCol(p,...keys);
+      if (val !== '✅' && val !== '✅✅') return false;
     }
     return true;
   });
@@ -700,10 +708,7 @@ async function init() {
     const res2 = await fetch(URL_BOOST);
     if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
     const txt2 = await res2.text();
-    console.log('Booster TSV eerste 200 tekens:', txt2.substring(0,200));
     boosterData = parseTSV(txt2, 'Booster');
-    console.log('Boosters geladen:', boosterData.length, 'rijen');
-    console.log('Eerste booster:', JSON.stringify(boosterData[0]));
     renderBoosters();
   } catch(e) {
     console.error('Booster fout:', e);
@@ -712,15 +717,6 @@ async function init() {
   }
 }
 init();
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/planten/sw.js')
-      .then(r => console.log('SW geregistreerd:', r.scope))
-      .catch(e => console.log('SW fout:', e));
-  });
-}
 </script>
 </body>
 </html>
